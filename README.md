@@ -1,4 +1,8 @@
 # Minecraft-Villager-Curing
-You don't have to know how it works, it just does.
+I was tired of having to constantly figure out the formula. Villager rolling shouldn't be this hard.
 
-Put the villager's base price in (no discounts), then the program will calculate if you get 1 emerald or more then 1 emerald via curing.
+1. Input librarian villager's enchanted book base price (no discounts)
+2. Program will tell you if it's 1 emerald or not.
+3. Cure the villager to get the permanent discount.
+4. Use the provided checklist to keep track of your currently obtained villagers.
+5. Profit.
