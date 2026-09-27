@@ -1,4 +1,6 @@
 # Minecraft-Villager-Curing
+Supports Minecraft Java Edition 1.21.11 or newer.
+
 I was tired of having to constantly figure out the formula. Villager rolling shouldn't be this hard.
 
 1. Input librarian villager's enchanted book base price (no discounts)
