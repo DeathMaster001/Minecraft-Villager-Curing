@@ -1,8 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 import json
 import os
-
+import sys
 
 # ============================================================
 # SETTINGS
@@ -10,7 +10,19 @@ import os
 
 CURE_DISCOUNT = 20
 ONE_EMERALD_CUTOFF = 21
-SAVE_FILE = "librarian_checklist.json"
+
+if getattr(sys, "frozen", False):
+    # Running as a bundled .exe
+    SAVE_FILE = os.path.join(
+        os.path.dirname(sys.executable),
+        "librarian_checklist.json"
+    )
+else:
+    # Running as a .py file
+    SAVE_FILE = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "librarian_checklist.json"
+    )
 
 
 # ============================================================
@@ -136,6 +148,83 @@ def save_checklist():
         messagebox.showerror(
             "Save Error",
             "Could not save the checklist."
+        )
+
+def save_checklist_as():
+    data = {
+        enchantment: variable.get()
+        for enchantment, variable in checklist_vars.items()
+    }
+
+    file_path = filedialog.asksaveasfilename(
+        title="Save Librarian Checklist",
+        defaultextension=".json",
+        initialfile="librarian_checklist.json",
+        filetypes=[
+            ("JSON Files", "*.json"),
+            ("All Files", "*.*")
+        ]
+    )
+
+    if not file_path:
+        return
+
+    try:
+        with open(file_path, "w", encoding="utf-8") as file:
+            json.dump(
+                data,
+                file,
+                indent=4
+            )
+
+        messagebox.showinfo(
+            "Checklist Saved",
+            "Your checklist was saved successfully."
+        )
+
+    except OSError:
+        messagebox.showerror(
+            "Save Error",
+            "Could not save the checklist."
+        )
+
+def load_checklist_from_file():
+    file_path = filedialog.askopenfilename(
+        title="Load Librarian Checklist",
+        filetypes=[
+            ("JSON Files", "*.json"),
+            ("All Files", "*.*")
+        ]
+    )
+
+    if not file_path:
+        return
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            saved_data = json.load(file)
+
+        for enchantment, variable in checklist_vars.items():
+            variable.set(
+                bool(
+                    saved_data.get(
+                        enchantment,
+                        False
+                    )
+                )
+            )
+
+        update_progress()
+
+        messagebox.showinfo(
+            "Checklist Loaded",
+            "Your checklist was loaded successfully."
+        )
+
+    except (OSError, json.JSONDecodeError):
+        messagebox.showerror(
+            "Load Error",
+            "Could not load the checklist."
         )
 
 
@@ -414,13 +503,35 @@ reset_button.pack(
     padx=5
 )
 
-save_button = tk.Button(
+save_button1 = tk.Button(
     button_frame,
     text="Save",
     command=save_checklist
 )
 
+save_button1.pack(
+    side="left",
+    padx=5
+)
+
+save_button = tk.Button(
+    button_frame,
+    text="Save As...",
+    command=save_checklist_as
+)
+
 save_button.pack(
+    side="left",
+    padx=5
+)
+
+load_button = tk.Button(
+    button_frame,
+    text="Load",
+    command=load_checklist_from_file
+)
+
+load_button.pack(
     side="left",
     padx=5
 )
